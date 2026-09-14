@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+</head>
+<body>
+    <div id="body">
+        <h1>Invoice Generator</h1>
+        <h4>Enter Secret Key : </h4>
+        <input placeholder="Enter Secret Key" id="secret"/>
+        <h4>You will generate Invoice for <span id="month" style="color: #1972d6;"></span> </h4>
+        <button onclick="generate()">Generate</button>
+        <h3 id="response" style="background: #f00;"></h3>
+    </div>
+
+    <script>
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], colors = ["006ee6","004999","fdc407","dba800","fb9101"];
+        
+        document.getElementById("month").innerText = months[new Date().getMonth()] + "-" + new Date().getFullYear();
+
+        async function loader(){
+            const res = await fetch("/secured/thisinvoice");
+
+            const reJSON = await res.json();
+
+            if(reJSON.generated) document.getElementById("body").innerHTML = reJSON.payed ? "<h1>Made & Paid !!!!</h1>" : "<h1>Made But NOT Paid !!!!</h1>";
+        } 
+
+        async function generate(){
+            const res = await fetch("/secured/makeinvoice?secret="+document.getElementById("secret").value);
+
+            const reJSON = await res.json();
+
+            document.getElementById("response").innerText = reJSON.made ? "Invoice Generated !!" : "Error in Invoice Generation !!";
+        }
+
+        loader();
+    </script>
+</body>
+</html>
